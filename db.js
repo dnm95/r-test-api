@@ -66,14 +66,35 @@ const createRolesTable = () => {
 /*
   Create Schedules Table
 */
-const createSchedulesTable = () => {
+const createEntryTime = () => {
   const query =
   `CREATE TABLE IF NOT EXISTS
-    schedules(
+    entry_time(
       id SERIAL PRIMARY KEY,
       day DATE NOT NULL,
-      entry_time TIME NOT NULL,
-      departure_time TIME NOT NULL,
+      hour TIME NOT NULL,
+      employee_id INTEGER NOT NULL,
+      FOREIGN KEY (employee_id) REFERENCES employees (id) ON DELETE CASCADE ON UPDATE CASCADE
+    )`;
+
+  pool.query(query)
+  .then((res) => {
+    console.log(res);
+    pool.end();
+  })
+  .catch((err) => {
+    console.log(err);
+    pool.end();
+  });
+};
+
+const createDepartureTime = () => {
+  const query =
+  `CREATE TABLE IF NOT EXISTS
+    departure_time(
+      id SERIAL PRIMARY KEY,
+      day DATE NOT NULL,
+      hour TIME NOT NULL,
       employee_id INTEGER NOT NULL,
       FOREIGN KEY (employee_id) REFERENCES employees (id) ON DELETE CASCADE ON UPDATE CASCADE
     )`;
