@@ -1,0 +1,98 @@
+{
+  "name": "r-test-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "ENV=test ./node_modules/mocha/bin/mocha",
+    "start": "ENV=local DEBUG=\"review:*\" nodemon app",
+    "lint:eslint": "eslint --ignore-path .gitignore  --ignore-pattern internals/scripts",
+    "lint:eslintall": "eslint app/* && eslint test/*",
+    "lint:staged": "lint-staged"
+  },
+  "author": "Daniel Nava",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "pg": "^7.12.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-react": "^7.14.3",
+    "expect.js": "^0.3.1",
+    "lint-staged": "^9.2.5",
+    "mocha": "^6.2.0",
+    "nodemon": "^1.19.2",
+    "pre-commit": "^1.2.2"
+  },
+  "pre-commit": "lint:staged",
+  "engines": {
+    "npm": ">=3",
+    "node": ">=7"
+  },
+  "lint-staged": {
+    "*.js": "lint:eslint"
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": [
+      "plugin:node/recommended",
+      "airbnb"
+    ],
+    "env": {
+      "browser": false,
+      "node": true,
+      "jest": true,
+      "es6": true
+    },
+    "plugins": [
+      "node"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module"
+    },
+    "rules": {
+      "arrow-parens": [
+        "error",
+        "always"
+      ],
+      "arrow-body-style": [
+        2,
+        "as-needed"
+      ],
+      "comma-dangle": [
+        2,
+        "always-multiline"
+      ],
+      "import/imports-first": 0,
+      "import/newline-after-import": 0,
+      "import/no-dynamic-require": 0,
+      "import/no-extraneous-dependencies": 0,
+      "import/no-named-as-default": 0,
+      "import/prefer-default-export": 0,
+      "indent": [
+        2,
+        2,
+        {
+          "SwitchCase": 1
+        }
+      ],
+      "max-len": 0,
+      "newline-per-chained-call": 0,
+      "no-confusing-arrow": 0,
+      "no-console": 1,
+      "no-use-before-define": 0,
+      "prefer-template": 2,
+      "class-methods-use-this": 0,
+      "require-yield": 0,
+      "import/no-webpack-loader-syntax": 0,
+      "jsx-a11y/href-no-hash": 0
+    }
+  }
+}
