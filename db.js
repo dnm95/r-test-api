@@ -1,15 +1,11 @@
-// db.js
-const { Pool } = require('pg');
-const dotenv = require('dotenv');
-
-dotenv.config();
+const Pool = require('pg').Pool;
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-});
-
-pool.on('connect', () => {
-  console.log('connected to the db');
+  user: 'me',
+  host: 'localhost',
+  database: 'runa_test',
+  password: 'password',
+  port: 5432,
 });
 
 /*
@@ -17,14 +13,17 @@ pool.on('connect', () => {
 */
 const createEmployeesTable = () => {
   const query =
-    `CREATE TABLE IF NOT EXISTS
+    `CREATE TYPE role AS ENUM ('admin', 'user');
+    CREATE TABLE IF NOT EXISTS
       employees(
         id SERIAL PRIMARY KEY,
         name VARCHAR(50) NOT NULL,
         first_name VARCHAR(50) NOT NULL,
         last_name VARCHAR(50) NOT NULL,
         rfc VARCHAR(50) NOT NULL UNIQUE,
-        email VARCHAR(50) NOT NULL UNIQUE
+        email VARCHAR(50) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role role NOT NULL
       )`;
 
   pool.query(query)
@@ -39,32 +38,7 @@ const createEmployeesTable = () => {
 }
 
 /*
-  Create Roles Table
-*/
-const createRolesTable = () => {
-  const query =
-  `CREATE TYPE IF NOT EXISTS role AS ENUM ('admin', 'user');
-  CREATE TABLE IF NOT EXISTS
-    roles(
-      id SERIAL PRIMARY KEY,
-      type role,
-      employee_id INTEGER NOT NULL,
-      FOREIGN KEY (employee_id) REFERENCES employees (id) ON DELETE CASCADE ON UPDATE CASCADE
-    )`;
-
-  pool.query(query)
-  .then((res) => {
-    console.log(res);
-    pool.end();
-  })
-  .catch((err) => {
-    console.log(err);
-    pool.end();
-  });
-};
-
-/*
-  Create Schedules Table
+  Create entry time Table
 */
 const createEntryTime = () => {
   const query =
@@ -87,6 +61,10 @@ const createEntryTime = () => {
     pool.end();
   });
 };
+
+/*
+  Create departure time Table
+*/
 
 const createDepartureTime = () => {
   const query =
@@ -114,7 +92,7 @@ const createDepartureTime = () => {
  * Drop Employees Table
  */
 const dropEmployeesTable = () => {
-  const query = 'DROP TABLE IF EXISTS employees returning *';
+  const query = 'DROP TABLE IF EXISTS employees';
   pool.query(query)
     .then((res) => {
       console.log(res);
@@ -127,10 +105,10 @@ const dropEmployeesTable = () => {
 }
 
 /**
- * Drop Roles Table
+ * Drop entry time Table
  */
-const dropRolesTable = () => {
-  const query = 'DROP TABLE IF EXISTS roles returning *';
+const dropEntryTimeTable = () => {
+  const query = 'DROP TABLE IF EXISTS entry_time';
   pool.query(query)
     .then((res) => {
       console.log(res);
@@ -143,10 +121,10 @@ const dropRolesTable = () => {
 }
 
 /**
- * Drop Schedules Table
+ * Drop departure time Table
  */
-const dropSchedulesTable = () => {
-  const query = 'DROP TABLE IF EXISTS schedules returning *';
+const dropDepartureTimeTable = () => {
+  const query = 'DROP TABLE IF EXISTS departure_time';
   pool.query(query)
     .then((res) => {
       console.log(res);
@@ -165,11 +143,9 @@ pool.on('remove', () => {
 
 module.exports = {
   createEmployeesTable,
-  createRolesTable,
-  createSchedulesTable,
+  createEntryTime,
+  createDepartureTime,
   dropEmployeesTable,
-  dropRolesTable,
-  dropSchedulesTable,
+  dropEntryTimeTable,
+  dropDepartureTimeTable,
 };
-
-require('make-runnable');

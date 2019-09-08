@@ -19,9 +19,9 @@ class AttendanceController {
         responses.internal_server_error(res);
         throw error;
       }
-      res.status(200).json(results.rows)
+      res.status(200).json(results.rows);
       // responses.ok(scores, res);
-    })
+    });
   }
 
   getEmployeesAttendance(req, res) {
@@ -31,39 +31,38 @@ class AttendanceController {
         responses.internal_server_error(res);
         throw error;
       }
-      res.status(200).json(results.rows)
+      res.status(200).json(results.rows);
       // responses.ok(scores, res);
-    })
+    });
   }
 
   addEmployeeAttendance(req, res) {
     const { employee, day, hour, type } = req.body;
 
-    const query = `INSERT INTO ${type} (day, hour, employee_id) VALUES ($1, $2, $3)`;
+    const query = `INSERT INTO ${type} (day, hour, employee_id) VALUES ($1, $2, $3) RETURNING employee_id`;
     pool.query(query, [day, hour, employee], (error, result) => {
       if (error) {
         responses.internal_server_error(res);
         throw error;
       }
-      console.log(result);
-      res.status(201).send(`Attendance added for employee: ${employee}`);
+      res.status(201).json(result.rows[0]);
     });
   }
 
     updateEmployeeAttendance(req, res) {
       const id = parseInt(req.params.id)
       const { day, hour, type } = req.body
-      const query = `UPDATE ${type} SET day = $1, hour = $2 WHERE id = $3`;
+      const query = `UPDATE ${type} SET day = $1, hour = $2 WHERE id = $3 RETURNING employee_id`;
 
       pool.query(
         query,
         [day, hour, id],
-        (error) => {
+        (error, result) => {
           if (error) {
             responses.internal_server_error(res);
             throw error;
           }
-          res.status(200).send(`Attendance modified id: ${id}`)
+          res.status(200).json(result.rows[0]);
         }
       );
     }
