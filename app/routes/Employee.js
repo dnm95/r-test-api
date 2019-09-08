@@ -1,6 +1,7 @@
 const express = require('express');
-const EmployeeController = require('../controllers/EmployeeController');
 const api = express.Router();
+const mdAuth = require('../middlewares/authenticated');
+const EmployeeController = require('../controllers/EmployeeController');
 
 api.post('/employee', EmployeeController.saveEmployee);
 api.post('/login', EmployeeController.login);

@@ -1,6 +1,7 @@
 const Pool = require('pg').Pool;
-const responses = require('../helpers/responses');
 const bcrypt = require('bcrypt');
+const responses = require('../helpers/responses');
+const jwt = require('../services/jwt');
 
 const pool = new Pool({
   user: 'me',
@@ -34,7 +35,7 @@ class EmployeeController {
   login(req, res) {
     const { email, password } = req.body;
 
-    const query = `SELECT * from employees WHERE email = $1`;
+    const query = `SELECT * from employees e WHERE email = $1`;
     pool.query(query, [email], (error, results) => {
       if (error) {
         responses.internal_server_error(res);
@@ -46,8 +47,12 @@ class EmployeeController {
           throw error;
         }
         if (check) {
-          // MIGRAR ROL DE USARIO A TABLA DE EMPLEADOS, PARA PODER INTEGRAR JWT
-          res.status(200).json(results.rows[0]);
+
+          res.status(200).json({
+            token: jwt.createToken(results.rows[0]),
+            email: results.rows[0].email,
+            role: results.rows[0].role,
+          });
         } else {
           res.status(404).json({ message: 'Usuario o contraseña incorrecta' });
         }
