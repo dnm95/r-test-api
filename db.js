@@ -35,7 +35,7 @@ const createEmployeesTable = () => {
     console.log(err);
     pool.end();
   });
-}
+};
 
 /*
   Create entry time Table
@@ -102,7 +102,7 @@ const dropEmployeesTable = () => {
       console.log(err);
       pool.end();
     });
-}
+};
 
 /**
  * Drop entry time Table
@@ -118,7 +118,7 @@ const dropEntryTimeTable = () => {
       console.log(err);
       pool.end();
     });
-}
+};
 
 /**
  * Drop departure time Table
@@ -134,7 +134,7 @@ const dropDepartureTimeTable = () => {
       console.log(err);
       pool.end();
     });
-}
+};
 
 pool.on('remove', () => {
   console.log('client removed');
