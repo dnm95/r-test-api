@@ -1,72 +1,58 @@
-const Pool = require('pg').Pool;
 const responses = require('../helpers/responses');
-
-const pool = new Pool({
-  user: 'me',
-  host: 'localhost',
-  database: 'runa_test',
-  password: 'password',
-  port: 5432,
-});
+const db = require('../services/db');
 
 class AttendanceController {
-
-  getEmployeeAttendance(req, res) {
+  async getEmployeeAttendance(req, res) {
     const employeeId = parseInt(req.params.employeeId);
     const query = 'SELECT et.day, et.hour, dt.day, dt.hour FROM employees e INNER JOIN entry_time et ON e.id = et.employee_id LEFT JOIN departure_time dt ON e.id = dt.employee_id AND et.day = dt.day WHERE e.id = $1';
-    pool.query(query, [employeeId], (error, results) => {
-      if (error) {
-        responses.internal_server_error(res);
-        throw error;
-      }
-      res.status(200).json(results.rows);
-      // responses.ok(scores, res);
-    });
+    try {
+      const { rows } = await db.query(query, [employeeId]);
+      res.status(200).json(rows);
+    } catch (error) {
+      responses.internal_server_error(res);
+      console.log(error);
+    }
   }
 
-  getEmployeesAttendance(req, res) {
+  async getEmployeesAttendance(req, res) {
     const query = 'SELECT e.name, e.first_name, e.last_name, et.day, et.hour, dt.day, dt.hour FROM employees e INNER JOIN entry_time et ON e.id = et.employee_id LEFT JOIN departure_time dt ON e.id = dt.employee_id AND et.day = dt.day WHERE et.day = current_date AND dt.day = current_date';
-    pool.query(query, (error, results) => {
-      if (error) {
-        responses.internal_server_error(res);
-        throw error;
-      }
-      res.status(200).json(results.rows);
-      // responses.ok(scores, res);
-    });
+    try {
+      const { rows } = await db.query(query, []);
+      res.status(200).json(rows);
+    } catch (error) {
+      responses.internal_server_error(res);
+      console.log(error);
+    }
   }
 
-  addEmployeeAttendance(req, res) {
-    const { employee, day, hour, type } = req.body;
+  async addEmployeeAttendance(req, res) {
+    const {
+      employee, day, hour, type,
+    } = req.body;
 
     const query = `INSERT INTO ${type} (day, hour, employee_id) VALUES ($1, $2, $3) RETURNING employee_id`;
-    pool.query(query, [day, hour, employee], (error, result) => {
-      if (error) {
-        responses.internal_server_error(res);
-        throw error;
-      }
-      res.status(201).json(result.rows[0]);
-    });
+    try {
+      const { rows } = await db.query(query, [day, hour, employee]);
+      res.status(201).json(rows[0]);
+    } catch (error) {
+      responses.internal_server_error(res);
+      console.log(error);
+    }
   }
 
-    updateEmployeeAttendance(req, res) {
-      const id = parseInt(req.params.id)
-      const { day, hour, type } = req.body
-      const query = `UPDATE ${type} SET day = $1, hour = $2 WHERE id = $3 RETURNING employee_id`;
+  async updateEmployeeAttendance(req, res) {
+    const id = parseInt(req.params.id);
+    const { day, hour, type } = req.body;
 
-      pool.query(
-        query,
-        [day, hour, id],
-        (error, result) => {
-          if (error) {
-            responses.internal_server_error(res);
-            throw error;
-          }
-          res.status(200).json(result.rows[0]);
-        }
-      );
+    const query = `UPDATE ${type} SET day = $1, hour = $2 WHERE id = $3 RETURNING employee_id`;
+    try {
+      const { rows } = await db.query(query, [day, hour, id]);
+      res.status(200).json(rows[0]);
+    } catch (error) {
+      responses.internal_server_error(res);
+      console.log(error);
     }
-
+  }
 }
 
 module.exports = new AttendanceController();
