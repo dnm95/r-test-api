@@ -1,19 +1,22 @@
+require('dotenv').config();
 const jwt = require('jwt-simple');
 const moment = require('moment');
 
-const secretKey = 'runa_test';
+const secretKey = process.env.JWT_SECRET_KEY;
 
+// eslint-disable-next-line consistent-return
 exports.ensureAuth = (req, res, next) => {
-  if(!req.headers.authorization) {
+  if (!req.headers.authorization) {
     return res.status(403).json({ message: 'Missing authentication header' });
   }
 
   const token = req.headers.authorization.replace(/['"]+/g, '');
+  let payload;
 
   try {
-    const payload = jwt.decode(token, secretKey);
+    payload = jwt.decode(token, secretKey);
 
-    if(payload.exp <= moment().unix()) {
+    if (payload.exp <= moment().unix()) {
       return res.status(401).json({ message: 'The token has expired' });
     }
   } catch (error) {
@@ -22,4 +25,5 @@ exports.ensureAuth = (req, res, next) => {
   }
 
   req.user = payload;
+  next();
 };

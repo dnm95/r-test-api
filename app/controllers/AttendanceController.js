@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 const responses = require('../helpers/responses');
 const db = require('../services/db');
 
@@ -15,6 +16,7 @@ class AttendanceController {
   }
 
   async getEmployeesAttendance(req, res) {
+    console.log('test');
     const query = 'SELECT e.name, e.first_name, e.last_name, et.day, et.hour, dt.day, dt.hour FROM employees e INNER JOIN entry_time et ON e.id = et.employee_id LEFT JOIN departure_time dt ON e.id = dt.employee_id AND et.day = dt.day WHERE et.day = current_date AND dt.day = current_date';
     try {
       const { rows } = await db.query(query, []);
