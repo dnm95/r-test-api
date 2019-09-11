@@ -34,7 +34,7 @@ const QUERIES = {
   getEmployeeById: 'SELECT e.id, e.name, e.first_name, e.last_name, e.email, e.rfc FROM employees e WHERE e.id = $1',
   login: 'SELECT * from employees e WHERE email = $1',
   getEmployeeAttendance: 'SELECT et.day as entry_date, et.hour as entry_hour, dt.day as departure_date, dt.hour as departure_hour FROM employees e INNER JOIN entry_time et ON e.id = et.employee_id LEFT JOIN departure_time dt ON e.id = dt.employee_id AND et.day = dt.day WHERE e.id = $1;',
-  getEmployeesAttendace: 'SELECT e.name, e.first_name, e.last_name, et.day, et.hour, dt.day, dt.hour FROM employees e INNER JOIN entry_time et ON e.id = et.employee_id LEFT JOIN departure_time dt ON e.id = dt.employee_id AND et.day = dt.day WHERE et.day = current_date AND dt.day = current_date',
+  getEmployeesAttendace: 'SELECT e.id, e.name, e.first_name, e.last_name, et.day as entry_date, et.hour as entry_hour, dt.day as departure_date, dt.hour as departure_hour FROM employees e INNER JOIN entry_time et ON e.id = et.employee_id LEFT JOIN departure_time dt ON e.id = dt.employee_id AND et.day = dt.day WHERE et.day = current_date AND dt.day = current_date',
   insertEmployeeAttendance: (type) => `INSERT INTO ${type} (day, hour, employee_id) VALUES ($1, $2, $3) RETURNING employee_id`,
   updateEmployeeAttendance: (type) => `UPDATE ${type} SET day = $1, hour = $2 WHERE id = $3 RETURNING employee_id`,
 };
