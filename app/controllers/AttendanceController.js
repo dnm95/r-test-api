@@ -5,11 +5,12 @@ const { QUERIES } = require('../constants');
 
 class AttendanceController {
   async getEmployeeAttendance(req, res) {
-    const employeeId = parseInt(req.params.employeeId);
+    const employeeId = parseInt(req.params.id);
 
     try {
-      const { rows } = await db.query(QUERIES.getEmployeeAttendance, [employeeId]);
-      res.status(200).json(rows);
+      const employeeData = await db.query(QUERIES.getEmployeeById, [employeeId]);
+      const attendaces = await db.query(QUERIES.getEmployeeAttendance, [employeeId]);
+      res.status(200).json({ ...employeeData.rows[0], attendance: attendaces.rows });
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);

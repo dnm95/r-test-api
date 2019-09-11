@@ -5,6 +5,18 @@ const db = require('../services/db');
 const { QUERIES } = require('../constants');
 
 class EmployeeController {
+  async getEmployeeById(req, res) {
+    const employeeId = parseInt(req.params.id);
+
+    try {
+      const { rows } = await db.query(QUERIES.getEmployeeById, [employeeId]);
+      res.status(200).json(rows[0]);
+    } catch (error) {
+      responses.internal_server_error(res);
+      console.log(error);
+    }
+  }
+
   async saveEmployee(req, res) {
     const {
       name, firstName, lastName, rfc, email, password, role,
