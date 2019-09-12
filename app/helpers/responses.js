@@ -1,5 +1,6 @@
 // Success
-exports.ok = function ok(result, res) { res.status('200').send(result); };
+exports.ok = function ok(result, res) { res.status('200').json(result); };
+exports.created = function created(result, res) { res.status('201').json(result); };
 
 // Errors
 // 400

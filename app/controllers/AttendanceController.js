@@ -10,7 +10,7 @@ class AttendanceController {
     try {
       const employeeData = await db.query(QUERIES.getEmployeeById, [employeeId]);
       const attendaces = await db.query(QUERIES.getEmployeeAttendance, [employeeId]);
-      res.status(200).json({ ...employeeData.rows[0], attendance: attendaces.rows });
+      responses.ok({ ...employeeData.rows[0], attendance: attendaces.rows }, res);
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);
@@ -18,9 +18,10 @@ class AttendanceController {
   }
 
   async getEmployeesAttendance(req, res) {
+    const { today } = req.query;
     try {
-      const { rows } = await db.query(QUERIES.getEmployeesAttendace, []);
-      res.status(200).json(rows);
+      const { rows } = await db.query(today ? QUERIES.getTodayEmployeesAttendace : QUERIES.getEmployeesAttendace, []);
+      responses.ok(rows, res);
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);
@@ -31,7 +32,7 @@ class AttendanceController {
     try {
       const query = 'SELECT e.id, e.name, e.first_name, e.last_name, et.day as entry_date, et.hour as entry_hour, dt.day as departure_date, dt.hour as departure_hour FROM employees e INNER JOIN entry_time et ON e.id = et.employee_id LEFT JOIN departure_time dt ON e.id = dt.employee_id AND et.day = dt.day WHERE e.name LIKE $1 OR e.email LIKE $1';
       const { rows } = await db.query(query, [`${req.query.query}%`]);
-      res.status(200).json(rows);
+      responses.ok(rows, res);
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);
@@ -45,7 +46,7 @@ class AttendanceController {
 
     try {
       const { rows } = await db.query(QUERIES.insertEmployeeAttendance(type), [day, hour, employee]);
-      res.status(201).json(rows[0]);
+      responses.created(rows[0], res);
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);
@@ -58,7 +59,7 @@ class AttendanceController {
 
     try {
       const { rows } = await db.query(QUERIES.updateEmployeeAttendance(type), [day, hour, id]);
-      res.status(200).json(rows[0]);
+      responses.ok(rows[0], res);
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);

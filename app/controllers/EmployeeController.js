@@ -11,7 +11,17 @@ class EmployeeController {
 
     try {
       const { rows } = await db.query(QUERIES.getEmployeeById, [employeeId]);
-      res.status(200).json(rows[0]);
+      responses.ok(rows[0], res);
+    } catch (error) {
+      responses.internal_server_error(res);
+      console.log(error);
+    }
+  }
+
+  async getEmployees(req, res) {
+    try {
+      const { rows } = await db.query(QUERIES.getEmployees, []);
+      responses.ok(rows, res);
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);
@@ -26,7 +36,7 @@ class EmployeeController {
 
     try {
       const { rows } = await db.query(QUERIES.insertEmployee, [name, first_name, last_name, rfc, email, hash, role]);
-      res.status(201).json(rows[0]);
+      responses.created(rows[0], res);
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);
@@ -41,7 +51,7 @@ class EmployeeController {
 
     try {
       const { rows } = await db.query(QUERIES.updateEmployee, [name, first_name, last_name, rfc, email, id]);
-      res.status(201).json(rows[0]);
+      responses.created(rows[0], res);
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);
@@ -53,7 +63,7 @@ class EmployeeController {
 
     try {
       const { rows } = await db.query(QUERIES.deleteEmployee, [id]);
-      res.status(201).json(rows[0]);
+      responses.ok(rows[0], res);
     } catch (error) {
       responses.internal_server_error(res);
       console.log(error);
@@ -71,12 +81,12 @@ class EmployeeController {
           throw err;
         }
         if (check) {
-          res.status(200).json({
+          responses.ok({
             token: jwt.createToken(rows[0]),
             email: rows[0].email,
             role: rows[0].role,
             id: rows[0].id,
-          });
+          }, res);
         } else {
           res.status(404).json({ message: 'Usuario o contraseña incorrecta' });
         }
