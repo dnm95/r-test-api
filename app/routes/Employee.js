@@ -4,7 +4,9 @@ const mdAuth = require('../middlewares/authenticated');
 const EmployeeController = require('../controllers/EmployeeController');
 
 api.get('/employee/:id', mdAuth.ensureAuth, EmployeeController.getEmployeeById);
-api.post('/employee', EmployeeController.saveEmployee);
+api.post('/employee', mdAuth.ensureAuth, EmployeeController.saveEmployee);
+api.put('/employee/:id', mdAuth.ensureAuth, EmployeeController.updateEmployee);
+api.delete('/employee/:id', mdAuth.ensureAuth, EmployeeController.deleteEmployee);
 api.post('/login', EmployeeController.login);
 
 module.exports = api;

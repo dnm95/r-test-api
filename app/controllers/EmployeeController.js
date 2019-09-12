@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const bcrypt = require('bcrypt');
 const responses = require('../helpers/responses');
 const jwt = require('../services/jwt');
@@ -19,12 +20,39 @@ class EmployeeController {
 
   async saveEmployee(req, res) {
     const {
-      name, firstName, lastName, rfc, email, password, role,
+      name, first_name, last_name, rfc, email, password, role,
     } = req.body;
     const hash = await bcrypt.hash(password, 10);
 
     try {
-      const { rows } = await db.query(QUERIES.insertEmployee, [name, firstName, lastName, rfc, email, hash, role]);
+      const { rows } = await db.query(QUERIES.insertEmployee, [name, first_name, last_name, rfc, email, hash, role]);
+      res.status(201).json(rows[0]);
+    } catch (error) {
+      responses.internal_server_error(res);
+      console.log(error);
+    }
+  }
+
+  async updateEmployee(req, res) {
+    const id = parseInt(req.params.id);
+    const {
+      name, first_name, last_name, rfc, email,
+    } = req.body;
+
+    try {
+      const { rows } = await db.query(QUERIES.updateEmployee, [name, first_name, last_name, rfc, email, id]);
+      res.status(201).json(rows[0]);
+    } catch (error) {
+      responses.internal_server_error(res);
+      console.log(error);
+    }
+  }
+
+  async deleteEmployee(req, res) {
+    const id = parseInt(req.params.id);
+
+    try {
+      const { rows } = await db.query(QUERIES.deleteEmployee, [id]);
       res.status(201).json(rows[0]);
     } catch (error) {
       responses.internal_server_error(res);

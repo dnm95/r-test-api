@@ -31,6 +31,8 @@ const QUERIES = {
   dropEntryTimeTable: 'DROP TABLE IF EXISTS entry_time',
   dropDepartureTimeTable: 'DROP TABLE IF EXISTS departure_time',
   insertEmployee: 'INSERT INTO employees (name, first_name, last_name, rfc, email, password, role) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING email',
+  updateEmployee: 'UPDATE employees SET name = $1, first_name = $2, last_name = $3, rfc = $4, email = $5 WHERE id = $6 RETURNING email',
+  deleteEmployee: 'DELETE FROM employees WHERE id = $1',
   getEmployeeById: 'SELECT e.id, e.name, e.first_name, e.last_name, e.email, e.rfc FROM employees e WHERE e.id = $1',
   login: 'SELECT * from employees e WHERE email = $1',
   getEmployeeAttendance: 'SELECT et.day as entry_date, et.hour as entry_hour, dt.day as departure_date, dt.hour as departure_hour FROM employees e INNER JOIN entry_time et ON e.id = et.employee_id LEFT JOIN departure_time dt ON e.id = dt.employee_id AND et.day = dt.day WHERE e.id = $1;',
