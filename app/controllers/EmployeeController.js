@@ -47,6 +47,7 @@ class EmployeeController {
             token: jwt.createToken(rows[0]),
             email: rows[0].email,
             role: rows[0].role,
+            id: rows[0].id,
           });
         } else {
           res.status(404).json({ message: 'Usuario o contraseña incorrecta' });

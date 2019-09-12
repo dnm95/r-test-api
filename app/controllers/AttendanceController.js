@@ -27,6 +27,17 @@ class AttendanceController {
     }
   }
 
+  async searchAttendancess(req, res) {
+    try {
+      const query = 'SELECT e.id, e.name, e.first_name, e.last_name, et.day as entry_date, et.hour as entry_hour, dt.day as departure_date, dt.hour as departure_hour FROM employees e INNER JOIN entry_time et ON e.id = et.employee_id LEFT JOIN departure_time dt ON e.id = dt.employee_id AND et.day = dt.day WHERE e.name LIKE $1 OR e.email LIKE $1';
+      const { rows } = await db.query(query, [`${req.query.query}%`]);
+      res.status(200).json(rows);
+    } catch (error) {
+      responses.internal_server_error(res);
+      console.log(error);
+    }
+  }
+
   async addEmployeeAttendance(req, res) {
     const {
       employee, day, hour, type,
