@@ -32,7 +32,7 @@ const QUERIES = {
   dropDepartureTimeTable: 'DROP TABLE IF EXISTS departure_time',
   insertEmployee: 'INSERT INTO employees (name, first_name, last_name, rfc, email, password, role) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING email',
   updateEmployee: 'UPDATE employees SET name = $1, first_name = $2, last_name = $3, rfc = $4, email = $5 WHERE id = $6 RETURNING email',
-  deleteEmployee: 'DELETE FROM employees WHERE id = $1',
+  deleteEmployee: 'DELETE FROM employees WHERE id = $1 RETURNING email',
   getEmployeeById: 'SELECT e.id, e.name, e.first_name, e.last_name, e.email, e.rfc FROM employees e WHERE e.id = $1',
   getEmployees: 'SELECT e.id, e.name, e.first_name, e.last_name, e.email, e.rfc FROM employees e',
   login: 'SELECT * from employees e WHERE email = $1',
